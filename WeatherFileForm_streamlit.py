@@ -110,7 +110,15 @@ col_map, col_opts = st.columns([3, 2])
 with col_map:
     st.subheader("Select Location")
     m = folium.Map(location=[st.session_state.lat, st.session_state.lon], zoom_start=6)
-    folium.Marker([st.session_state.lat, st.session_state.lon]).add_to(m)
+    folium.CircleMarker(
+        location=[st.session_state.lat, st.session_state.lon],
+        radius=8,
+        color="#d1495b",
+        weight=2,
+        fill=True,
+        fill_color="#d1495b",
+        fill_opacity=0.85,
+    ).add_to(m)
     map_data = st_folium(m, width="100%", height=450)
     
     if map_data and map_data.get("last_clicked"):
