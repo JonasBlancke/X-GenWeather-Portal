@@ -11,6 +11,18 @@ from streamlit_folium import st_folium
 # --- CONFIGURATION ---
 FORMSPREE_ENDPOINT = "https://formspree.io/f/myknozkr"
 
+ASHRAE_ZONES = {
+    "0 - Extremely Hot": ["0A - Extremely Hot - Humid", "0B - Extremely Hot - Dry"],
+    "1 - Very Hot": ["1A - Very Hot - Humid", "1B - Very Hot - Dry"],
+    "2 - Hot": ["2A - Hot - Humid", "2B - Hot - Dry"],
+    "3 - Warm": ["3A - Warm - Humid", "3B - Warm - Dry", "3C - Warm - Marine"],
+    "4 - Mixed": ["4A - Mixed - Humid", "4B - Mixed - Dry", "4C - Mixed - Marine"],
+    "5 - Cool": ["5A - Cool - Humid", "5B - Cool - Dry", "5C - Cool - Marine"],
+    "6 - Cold": ["6A - Cold - Humid", "6B - Cold - Dry"],
+    "7 - Very Cold": ["7 - Very Cold"],
+    "8 - Subarctic": ["8 - Subarctic / Arctic"],
+}
+
 st.set_page_config(page_title="Climate Simulation Portal", page_icon="🌍", layout="wide")
 
 # --- SESSION STATE ---
@@ -111,7 +123,6 @@ with col_opts:
     st.subheader("Urban Context")
     uhi_on = st.toggle("Apply Urban Heat Island (UHI) Correction", value=True)
     if uhi_on:
-        # LCZ definitions
         lcz_options = [
             "1 - Compact High-Rise",
             "2 - Compact Mid-Rise",
@@ -132,9 +143,11 @@ with col_opts:
             "G - Water (River/lake/sea)"
         ]
         lcz_selection = st.selectbox("Local Climate Zone (LCZ)", lcz_options, index=2)
-        lcz = lcz_selection.split(" - ")[0]  # Extract just the code (e.g., "3", "A")
-        
-        ashrae = st.selectbox("ASHRAE Class", ["4A", "5A", "6A", "4B", "5B"])
+        lcz = lcz_selection.split(" - ")[0]
+
+        ashrae_main = st.selectbox("ASHRAE Main Climate Zone", list(ASHRAE_ZONES.keys()), index=4)
+        ashrae_subtype = st.selectbox("ASHRAE Subtype", ASHRAE_ZONES[ashrae_main])
+        ashrae = ashrae_subtype.split(" - ")[0]
     else:
         lcz, ashrae = "/", "/"
 
