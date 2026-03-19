@@ -60,7 +60,15 @@ with st.sidebar:
     
     # Future EPW Selection
     st.subheader("Future EPW")
-    st.info(f"📅 Using Future Period: {f_start} - {f_end}")
+    
+    # GWL vs SSP selection logic
+    st.info("⚠️ Select EITHER GWL (Global Warming Level) OR SSP (Scenarios):\n- **GWL**: Years vary by climate model\n- **SSP**: Fixed time window below")
+    
+    if gwl_choice != "/":
+        st.info(f"📅 Using GWL {gwl_choice}°C target - Future period varies by model")
+    else:
+        st.info(f"📅 Using Future Period: {f_start} - {f_end}")
+    
     future_epw_types = st.multiselect("Select Future Type(s)", ["TMY (Typical)", "XMY (Extreme)"], key="future_epw_types")
     
     future_epw_config = {"period": (f_start, f_end)}
@@ -94,17 +102,6 @@ with col_map:
         st.rerun()
 
 with col_opts:
-    st.subheader("Simulation Detail")
-    sim_type = st.radio("Primary Metric Focus", ["Heatwave", "Fire Weather (FWI)"])
-    
-    if sim_type == "Heatwave":
-        metric = st.selectbox("Heatwave Metric", ['TX7d', 'TX5d', 'TX3d', 'HWMId', 'EHF', 'Hotspell', 'HeatwaveAvgTmax'])
-    else:
-        metric = "FWI"
-        
-    ret_period = st.number_input("Return Period (Years)", value=10)
-    
-    st.divider()
     st.subheader("Urban Context")
     uhi_on = st.toggle("Apply Urban Heat Island (UHI) Correction", value=True)
     if uhi_on:
@@ -114,8 +111,17 @@ with col_opts:
         lcz, ashrae = "/", "/"
 
 # --- BUILD FINAL YAML ---
+# Set defaults for metric/return period (used if XMY not selected)
+metric = "TX_max_7d"  # Default heatwave metric
+ret_period = 10  # Default return period
+
+# Override with XMY settings if extreme event is selected
+if "XMY (Extreme)" in future_epw_types:
+    metric = extreme_metric
+    ret_period = extreme_return_period
+
 info_data = {
-    "SIMULATION": f"{client_name}_{ssp_choice[0]}_{f_start}_{f_end}_{sim_type.lower()}",
+    "SIMULATION": f"{client_name}_{ssp_choice[0] if ssp_choice else 'GWL'}_{f_start}_{f_end}_epw",
     "CITY": {
         "LAT": round(st.session_state.lat, 4),
         "LON": round(st.session_state.lon, 4),
