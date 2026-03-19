@@ -42,7 +42,7 @@ def auto_calc_timezone(lat, lon):
         st.session_state.gmt = int(winter_dt.utcoffset().total_seconds() / 3600)
 
 # --- UI HEADER ---
-st.title("🌍 Climate Simulation Request Portal")
+st.title("🌍 EPW Climate Simulation Request Portal")
 st.markdown("Select your location and parameters. B-Kode will process the EPW files and contact you.")
 
 # --- SIDEBAR: CORE PARAMETERS ---
