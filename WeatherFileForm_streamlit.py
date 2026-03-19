@@ -37,13 +37,22 @@ st.markdown("Select your location and parameters. B-Kode will process the EPW fi
 with st.sidebar:
     st.header("1. Core Setup")
     client_name = st.text_input("Project / Client Name", "MyProject_01")
-    ssp_choice = st.multiselect("Climate Scenarios (SSP)", ["ssp126", "ssp245", "ssp370", "ssp585"], default=["ssp585"])
-    gwl_choice = st.selectbox("Global Warming Level (GWL)", ["/", "1.5", "2.0", "3.0", "4.0"])
     
-    st.header("2. Time Window")
-    f_start, f_end = st.slider("Future Period", 2015, 2100, (2031, 2050))
+    # Future Scenario Selection
+    scenario_type = st.selectbox("Future Scenario Selection", ["Global Warming Level (GWL)", "Shared Economic Pathway (SSP)"])
     
-    st.header("3. Output Format")
+    if scenario_type == "Global Warming Level (GWL)":
+        gwl_choice = st.selectbox("Select GWL Target", ["1.5", "2.0", "3.0", "4.0"])
+        ssp_choice = []
+        # Auto-detect years based on GWL (simplified mapping)
+        gwl_year_map = {"1.5": (2025, 2040), "2.0": (2035, 2055), "3.0": (2055, 2080), "4.0": (2080, 2100)}
+        f_start, f_end = gwl_year_map.get(gwl_choice, (2031, 2050))
+    else:  # SSP
+        ssp_choice = st.multiselect("Climate Scenarios (SSP)", ["ssp126", "ssp245", "ssp370", "ssp585"], default=["ssp585"])
+        gwl_choice = "/"
+        f_start, f_end = st.slider("Future Period", 2015, 2100, (2031, 2050))
+    
+    st.header("2. Output Format")
     
     # Historical EPW Selection
     st.subheader("Historical EPW")
@@ -61,13 +70,10 @@ with st.sidebar:
     # Future EPW Selection
     st.subheader("Future EPW")
     
-    # GWL vs SSP selection logic
-    st.info("⚠️ Select EITHER GWL (Global Warming Level) OR SSP (Scenarios):\n- **GWL**: Years vary by climate model\n- **SSP**: Fixed time window below")
-    
-    if gwl_choice != "/":
-        st.info(f"📅 Using GWL {gwl_choice}°C target - Future period varies by model")
+    if scenario_type == "Global Warming Level (GWL)":
+        st.info(f"📅 Using GWL {gwl_choice}°C target - Future period: {f_start} - {f_end} (varies by model)")
     else:
-        st.info(f"📅 Using Future Period: {f_start} - {f_end}")
+        st.info(f"📅 Using SSP {ssp_choice[0] if ssp_choice else 'N/A'} - Fixed period: {f_start} - {f_end}")
     
     future_epw_types = st.multiselect("Select Future Type(s)", ["TMY (Typical)", "XMY (Extreme)"], key="future_epw_types")
     
@@ -121,7 +127,7 @@ if "XMY (Extreme)" in future_epw_types:
     ret_period = extreme_return_period
 
 info_data = {
-    "SIMULATION": f"{client_name}_{ssp_choice[0] if ssp_choice else 'GWL'}_{f_start}_{f_end}_epw",
+    "SIMULATION": f"{client_name}_{'GWL'+gwl_choice if gwl_choice != '/' else ssp_choice[0]}_{f_start}_{f_end}_epw",
     "CITY": {
         "LAT": round(st.session_state.lat, 4),
         "LON": round(st.session_state.lon, 4),
@@ -132,9 +138,9 @@ info_data = {
         "FIRST_FUTURE": f_start, "LAST_FUTURE": f_end,
     },
     "CMIP6": {
-        "SSP": ssp_choice,
-        "GWL": gwl_choice,
-        "intimeperiod": "YES" if gwl_choice == "/" else "NO"
+        "SSP": ssp_choice if ssp_choice else "/",
+        "GWL": gwl_choice if gwl_choice != "/" else "/",
+        "intimeperiod": "YES" if scenario_type == "Shared Economic Pathway (SSP)" else "NO"
     },
     "EXTREME_SELECTION": {
         "METHOD": metric,
