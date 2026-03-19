@@ -113,21 +113,21 @@ with col_opts:
     if uhi_on:
         # LCZ definitions
         lcz_options = [
-            "1 - Compact High-Rise (Dense high-rise, steel/glass)",
-            "2 - Compact Mid-Rise (Dense mid-rise, concrete)",
-            "3 - Compact Low-Rise (Dense low-rise, masonry)",
-            "4 - Open High-Rise (Open high-rise, concrete/steel)",
-            "5 - Open Mid-Rise (Open mid-rise, concrete/steel)",
-            "6 - Open Low-Rise (Open low-rise, wood/masonry)",
-            "7 - Lightweight Low-Rise (Lightweight materials)",
-            "8 - Large Low-Rise (Industrial, metal/concrete)",
-            "9 - Sparsely Built (Low density)",
-            "10 - Heavy Industry (Industrial sites)",
-            "A - Dense Trees (Evergreen/deciduous)",
+            "1 - Compact High-Rise",
+            "2 - Compact Mid-Rise",
+            "3 - Compact Low-Rise",
+            "4 - Open High-Rise",
+            "5 - Open Mid-Rise",
+            "6 - Open Low-Rise",
+            "7 - Lightweight Low-Rise",
+            "8 - Large Low-Rise",
+            "9 - Sparsely Built",
+            "10 - Heavy Industry",
+            "A - Dense Trees",
             "B - Scattered Trees",
             "C - Bush, Scrub",
             "D - Low Plants (Grass/crops)",
-            "E - Bare Rock or Paved (Rock/concrete)",
+            "E - Bare Rock or Paved",
             "F - Bare Soil or Sand",
             "G - Water (River/lake/sea)"
         ]
