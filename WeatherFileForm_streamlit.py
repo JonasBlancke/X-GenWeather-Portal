@@ -159,6 +159,13 @@ with col_opts:
     else:
         lcz, ashrae = "/", "/"
 
+st.divider()
+special_requests = st.text_area(
+    "Questions / Notes / Special Requests",
+    placeholder="Add any extra context, questions, delivery notes, or special requests here.",
+    height=140,
+)
+
 # --- BUILD FINAL YAML ---
 # Set defaults for metric/return period (used if XMY not selected)
 metric = "TX_max_7d"  # Default heatwave metric
@@ -194,6 +201,7 @@ info_data = {
         "LCZ_URBAN": lcz,
         "ASHRAE_CLASS": ashrae
     },
+    "CLIENT_NOTES": special_requests if special_requests.strip() else "/",
     "CLIENT_EXPORT": {
         "HISTORICAL_EPW": hist_epw_config,
         "FUTURE_EPW": future_epw_config
@@ -214,7 +222,8 @@ with c1:
         payload = {
             "Client": client_name,
             "Coordinates": f"{st.session_state.lat}, {st.session_state.lon}",
-            "Config": final_yaml
+            "Config": final_yaml,
+            "Notes": special_requests,
         }
         res = requests.post(FORMSPREE_ENDPOINT, json=payload)
         if res.status_code == 200:
