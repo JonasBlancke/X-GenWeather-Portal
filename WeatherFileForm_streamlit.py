@@ -44,7 +44,39 @@ with st.sidebar:
     f_start, f_end = st.slider("Future Period", 2015, 2100, (2031, 2050))
     
     st.header("3. Output Format")
-    epw_format = st.selectbox("Requested EPW Type", ["TMY (Typical)", "AMY (Actual)", "XMY (Extreme)", "DSY (Design)"])
+    
+    # Historical EPW Selection
+    st.subheader("Historical EPW")
+    hist_epw_types = st.multiselect("Select Historical Type(s)", ["AMY (Actual)", "TMY (Typical)"], key="hist_epw_types")
+    
+    hist_epw_config = {}
+    if "TMY (Typical)" in hist_epw_types:
+        tmy_start, tmy_end = st.slider("TMY Creation Period (Years)", 1960, 2025, (1990, 2020), key="tmy_period")
+        hist_epw_config["TMY"] = {"start_year": tmy_start, "end_year": tmy_end}
+    
+    if "AMY (Actual)" in hist_epw_types:
+        amy_year = st.selectbox("Select Year for AMY", range(2025, 1959, -1), key="amy_year")
+        hist_epw_config["AMY"] = amy_year
+    
+    # Future EPW Selection
+    st.subheader("Future EPW")
+    st.info(f"📅 Using Future Period: {f_start} - {f_end}")
+    future_epw_types = st.multiselect("Select Future Type(s)", ["TMY (Typical)", "XMY (Extreme)"], key="future_epw_types")
+    
+    future_epw_config = {"period": (f_start, f_end)}
+    if "XMY (Extreme)" in future_epw_types:
+        with st.expander("⚡ Extreme Event Details", expanded=True):
+            extreme_return_period = st.number_input("Return Period (Years)", value=10, min_value=1, key="extreme_return_period")
+            extreme_event_type = st.selectbox("Extreme Event Type", ["Heatwave", "Cold Spell", "Drought", "Flood"], key="extreme_event_type")
+            extreme_metric = st.selectbox("Specific Metric", ['TX7d', 'TX5d', 'TX3d', 'HWMId', 'EHF', 'Hotspell'], key="extreme_metric")
+            future_epw_config["XMY"] = {
+                "return_period": extreme_return_period,
+                "event_type": extreme_event_type,
+                "metric": extreme_metric
+            }
+    
+    if "TMY (Typical)" in future_epw_types:
+        future_epw_config["TMY"] = True
 
 # --- MAIN AREA ---
 col_map, col_opts = st.columns([3, 2])
@@ -108,7 +140,8 @@ info_data = {
         "ASHRAE_CLASS": ashrae
     },
     "CLIENT_EXPORT": {
-        "EPW_FORMAT": epw_format
+        "HISTORICAL_EPW": hist_epw_config,
+        "FUTURE_EPW": future_epw_config
     }
 }
 
