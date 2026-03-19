@@ -31,7 +31,7 @@ def auto_calc_timezone(lat, lon):
 
 # --- UI HEADER ---
 st.title("🌍 Climate Simulation Request Portal")
-st.markdown("Select your location and parameters. Our team will process the EPW files and contact you.")
+st.markdown("Select your location and parameters. B-Kode will process the EPW files and contact you.")
 
 # --- SIDEBAR: CORE PARAMETERS ---
 with st.sidebar:
@@ -52,7 +52,7 @@ col_map, col_opts = st.columns([3, 2])
 with col_map:
     st.subheader("Select Location")
     m = folium.Map(location=[st.session_state.lat, st.session_state.lon], zoom_start=6)
-    folium.Marker([st.session_state.lat, st.session_state.lon], popup="Target Location").add_to(m)
+    folium.Marker([st.session_state.lat, st.session_state.lon]).add_to(m)
     map_data = st_folium(m, width="100%", height=450)
     
     if map_data and map_data.get("last_clicked"):
