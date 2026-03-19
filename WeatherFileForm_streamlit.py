@@ -23,7 +23,12 @@ ASHRAE_ZONES = {
     "8 - Subarctic": ["8 - Subarctic / Arctic"],
 }
 
-st.set_page_config(page_title="EPW Climate Simulation Portal", page_icon="🌍", layout="wide")
+st.set_page_config(
+    page_title="EPW Climate Simulation Portal",
+    page_icon="🌍",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
 
 # --- SESSION STATE ---
 if "lat" not in st.session_state: st.session_state.lat = 53.3442
