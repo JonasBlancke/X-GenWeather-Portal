@@ -71,7 +71,7 @@ with st.sidebar:
     st.subheader("Future EPW")
     
     if scenario_type == "Global Warming Level (GWL)":
-        st.info(f"📅 Using GWL {gwl_choice}°C target - Future period: {f_start} - {f_end} (varies by model)")
+        st.info(f"📅 Using GWL {gwl_choice}°C target - Future period varies by model")
     else:
         st.info(f"📅 Using SSP {ssp_choice[0] if ssp_choice else 'N/A'} - Fixed period: {f_start} - {f_end}")
     
@@ -81,7 +81,7 @@ with st.sidebar:
     if "XMY (Extreme)" in future_epw_types:
         with st.expander("⚡ Extreme Event Details", expanded=True):
             extreme_return_period = st.number_input("Return Period (Years)", value=10, min_value=1, key="extreme_return_period")
-            extreme_event_type = st.selectbox("Extreme Event Type", ["Heatwave", "Cold Spell", "Drought", "Flood"], key="extreme_event_type")
+            extreme_event_type = st.selectbox("Extreme Event Type", ["Heatwave"], key="extreme_event_type")
             extreme_metric = st.selectbox("Specific Metric", ['TX7d', 'TX5d', 'TX3d', 'HWMId', 'EHF', 'Hotspell'], key="extreme_metric")
             future_epw_config["XMY"] = {
                 "return_period": extreme_return_period,
